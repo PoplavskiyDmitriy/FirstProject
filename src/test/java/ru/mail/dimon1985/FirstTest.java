@@ -82,7 +82,7 @@ public class FirstTest {
         WebElement cell;
         WebElement cell_price;
       while (true){
-          if (l<10) {
+          if (l<k) {
               eis_number = driver.findElements(By.xpath("//td[@aria-describedby='BaseMainContent_MainContent_jqgTrade_OosNumber']"));
               start_price = driver.findElements(By.xpath("//td[@aria-describedby='BaseMainContent_MainContent_jqgTrade_StartPrice']"));
               for (int i = 0; i < eis_number.size(); i++) {
@@ -139,7 +139,7 @@ public class FirstTest {
         l = Integer.valueOf(page_current.trim());
         int counter_abolished=0;
         while (true){
-            if (l<10) {
+            if (l<k) {
                 eis_number = driver.findElements(By.xpath("//td[@aria-describedby='BaseMainContent_MainContent_jqgTrade_OosNumber']"));
                 start_price = driver.findElements(By.xpath("//td[@aria-describedby='BaseMainContent_MainContent_jqgTrade_StartPrice']"));
                 for (int i = 0; i < eis_number.size(); i++) {
@@ -178,8 +178,7 @@ public class FirstTest {
             page_current = current_page_abolished.getAttribute("value");
             l = Integer.valueOf(page_current.trim());
         }
-        //System.out.println("Total start price: "+whole_amount+"руб.");
-        //System.out.println("Total number of lots: "+counter);
+        System.out.println("Total number of lots: "+counter);
         System.out.print("Total start price: ");
         System.out.printf("%.2f",whole_amount);
         System.out.println();
