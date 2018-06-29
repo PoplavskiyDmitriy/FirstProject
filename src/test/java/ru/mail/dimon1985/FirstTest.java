@@ -44,7 +44,15 @@ public class FirstTest {
         WebElement boxClose = driver.findElement(By.xpath("//a[text()='Спасибо, я уже открыл']"));
         boxClose.click();
         driver.navigate().refresh();
-        WebElement radioButton = driver.findElement(By.id("dnn_ctr691_View_RadioButton9"));
+        WebElement closeThirdWindow = driver.findElement(By.cssSelector("#new-requirements-digital-signature-modal > div.new-requirements__body > a.new-requirements__link"));
+        closeThirdWindow.click();
+        wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.id("dnn_ctr691_View_RadioButton9"))));
+        try {
+            TimeUnit.SECONDS.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        WebElement radioButton = driver.findElement(By.cssSelector("#dnn_ctr691_View_RadioButton9"));
         radioButton.click();
         ArrayList<String> tabs = new ArrayList<String>(driver.getWindowHandles());
         driver.switchTo().window(tabs.get(0));
@@ -60,6 +68,11 @@ public class FirstTest {
         WebElement searchButton = driver.findElement(By.cssSelector("#BaseMainContent_MainContent_btnSearch"));
         if (fz223ChecBbox.isSelected()&&commercialPurchase.isSelected()){
             searchButton.click();
+        }
+        try {
+            TimeUnit.SECONDS.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
         WebElement nextPage = driver.findElement(By.cssSelector("#next_t_BaseMainContent_MainContent_jqgTrade_toppager"));
         String price;
@@ -78,8 +91,8 @@ public class FirstTest {
         List<WebElement> startPriceColumn;
         WebElement EisCell;
         WebElement PriceCell;
-      while (true){
-          if (currentPageValue<totalPagesValue) {
+      while (currentPageValue<totalPagesValue){
+          //if (currentPageValue<totalPagesValue) {
               eisNumberColumn = driver.findElements(By.xpath("//td[@aria-describedby='BaseMainContent_MainContent_jqgTrade_OosNumber']"));
               startPriceColumn = driver.findElements(By.xpath("//td[@aria-describedby='BaseMainContent_MainContent_jqgTrade_StartPrice']"));
               for (int i = 0; i < eisNumberColumn.size(); i++) {
@@ -109,8 +122,8 @@ public class FirstTest {
 
               eisNumberColumn = null;
               startPriceColumn = null;
-          }
-          else { break;}
+          //}
+          //else { break;}
           currentPageAttribute = currentPage.getAttribute("value");
           currentPageValue = Integer.valueOf(currentPageAttribute.trim());
           }
@@ -130,8 +143,8 @@ public class FirstTest {
         currentPageAttribute = canceledCurrentPage.getAttribute("value");
         currentPageValue = Integer.valueOf(currentPageAttribute.trim());
         int canceledCounter=0;
-        while (true){
-            if (currentPageValue<totalPagesValue) {
+        while (currentPageValue<totalPagesValue){
+            //if (currentPageValue<totalPagesValue) {
                 wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//td[@aria-describedby='BaseMainContent_MainContent_jqgTrade_OosNumber']"))));
                 eisNumberColumn = driver.findElements(By.xpath("//td[@aria-describedby='BaseMainContent_MainContent_jqgTrade_OosNumber']"));
                 wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//td[@aria-describedby='BaseMainContent_MainContent_jqgTrade_StartPrice']"))));
@@ -162,8 +175,8 @@ public class FirstTest {
                 }
                 eisNumberColumn = null;
                 startPriceColumn = null;
-            }
-            else { break;}
+            //}
+            //else { break;}
             currentPageAttribute = canceledCurrentPage.getAttribute("value");
             currentPageValue = Integer.valueOf(currentPageAttribute.trim());
         }
@@ -191,7 +204,7 @@ public class FirstTest {
         report.write(String.format("%(.2f",total));
         report.close();
         System.out.println("Recorded");
-        driver.quit();
+        //driver.quit();
 
     }
 }
