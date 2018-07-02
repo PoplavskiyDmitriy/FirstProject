@@ -36,45 +36,36 @@ public class FirstTest {
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         driver.get("https://www.rts-tender.ru/auctionsearch");
-
+        driver.manage().timeouts().pageLoadTimeout(20,TimeUnit.SECONDS);
     }
     @Test
-    public void tasktest() {
-        final Wait<WebDriver> wait = new WebDriverWait(driver,10).withMessage("Element not found");
+    public void tasktest() throws Exception {
+        WebDriverWait wait = (WebDriverWait) new WebDriverWait(driver,15).withMessage("Element not found");
         WebElement boxClose = driver.findElement(By.xpath("//a[text()='Спасибо, я уже открыл']"));
         boxClose.click();
         driver.navigate().refresh();
         WebElement closeThirdWindow = driver.findElement(By.cssSelector("#new-requirements-digital-signature-modal > div.new-requirements__body > a.new-requirements__link"));
         closeThirdWindow.click();
-        wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.id("dnn_ctr691_View_RadioButton9"))));
-        try {
-            TimeUnit.SECONDS.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         WebElement radioButton = driver.findElement(By.cssSelector("#dnn_ctr691_View_RadioButton9"));
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("#new-requirements-digital-signature-modal")));
         radioButton.click();
         ArrayList<String> tabs = new ArrayList<String>(driver.getWindowHandles());
         driver.switchTo().window(tabs.get(0));
         driver.close();
         driver.switchTo().window(tabs.get(1));
-        WebElement fz223ChecBbox = driver.findElement(By.cssSelector("#BaseMainContent_MainContent_chkPurchaseType_0"));
-        fz223ChecBbox.sendKeys(Keys.SPACE);
+        WebElement fz223CheckBbox = driver.findElement(By.cssSelector("#BaseMainContent_MainContent_chkPurchaseType_0"));
+        fz223CheckBbox.click();
         WebElement commercialPurchase = driver.findElement(By.cssSelector("#BaseMainContent_MainContent_chkPurchaseType_1"));
         commercialPurchase.click();
         WebElement startPrice = driver.findElement(By.id("BaseMainContent_MainContent_txtStartPrice_txtRangeFrom"));
         startPrice.click();
         startPrice.sendKeys("0");
         WebElement searchButton = driver.findElement(By.cssSelector("#BaseMainContent_MainContent_btnSearch"));
-        if (fz223ChecBbox.isSelected()&&commercialPurchase.isSelected()){
+        if (fz223CheckBbox.isSelected()&&commercialPurchase.isSelected()){
             searchButton.click();
         }
-        try {
-            TimeUnit.SECONDS.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         WebElement nextPage = driver.findElement(By.cssSelector("#next_t_BaseMainContent_MainContent_jqgTrade_toppager"));
+        nextPage = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#next_t_BaseMainContent_MainContent_jqgTrade_toppager")));
         String price;
         String eisNumberValue;
         String priceValue;
@@ -83,7 +74,6 @@ public class FirstTest {
        String totalPages = pageCounter.getText().toString();
         totalPages = totalPages.replaceAll(" ","").trim();
        Integer totalPagesValue = Integer.valueOf(totalPages);
-        wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.cssSelector("#BaseMainContent_MainContent_jqgTrade_toppager_center > table > tbody > tr > td:nth-child(4) > input"))));
         WebElement currentPage = driver.findElement(By.cssSelector("#BaseMainContent_MainContent_jqgTrade_toppager_center > table > tbody > tr > td:nth-child(4) > input"));
         String currentPageAttribute = currentPage.getAttribute("value");
         Integer currentPageValue = Integer.valueOf(currentPageAttribute.trim());
@@ -91,13 +81,15 @@ public class FirstTest {
         List<WebElement> startPriceColumn;
         WebElement EisCell;
         WebElement PriceCell;
-      while (currentPageValue<totalPagesValue){
-          //if (currentPageValue<totalPagesValue) {
-              eisNumberColumn = driver.findElements(By.xpath("//td[@aria-describedby='BaseMainContent_MainContent_jqgTrade_OosNumber']"));
+        String compareCurrentPageValue;
+      while (currentPageValue<totalPagesValue+1){
+          eisNumberColumn = driver.findElements(By.xpath("//td[@aria-describedby='BaseMainContent_MainContent_jqgTrade_OosNumber']"));
               startPriceColumn = driver.findElements(By.xpath("//td[@aria-describedby='BaseMainContent_MainContent_jqgTrade_StartPrice']"));
               for (int i = 0; i < eisNumberColumn.size(); i++) {
+                  System.out.println(i);
                   EisCell = eisNumberColumn.get(i);
                   eisNumberValue = EisCell.getText();
+                  System.out.println(eisNumberValue);
                   if (!eisNumberValue.trim().equals("")) {
                       PriceCell = startPriceColumn.get(i);
                       price = PriceCell.getText();
@@ -108,33 +100,22 @@ public class FirstTest {
                       counter = counter + 1;
                   }
               }
-              try {
-                  TimeUnit.SECONDS.sleep(2);
-              } catch (InterruptedException e) {
-                  e.printStackTrace();
-              }
-              nextPage.click();
-              try {
-                  TimeUnit.SECONDS.sleep(2);
-              } catch (InterruptedException e) {
-                  e.printStackTrace();
-              }
-
+                compareCurrentPageValue = String.valueOf(currentPageValue+1);
+              if (currentPageValue!=totalPagesValue){
+                  nextPage.click();
+              wait.until(ExpectedConditions.attributeToBe(currentPage,"value",compareCurrentPageValue));
+                  }
+                  else{break;}
               eisNumberColumn = null;
               startPriceColumn = null;
-          //}
-          //else { break;}
           currentPageAttribute = currentPage.getAttribute("value");
           currentPageValue = Integer.valueOf(currentPageAttribute.trim());
           }
-        wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.cssSelector("#lotStateTabs > ul > li:nth-child(10) > a"))));
-        WebElement canceledButton = driver.findElement(By.cssSelector("#lotStateTabs > ul > li:nth-child(10) > a"));
+        WebElement canceledButton = driver.findElement(By.cssSelector("#lotStateTabs > ul > li:nth-child(11) > a"));
         canceledButton.click();
         wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//*[@id=\"sp_1_BaseMainContent_MainContent_jqgTrade_toppager\"]"))));
         WebElement canceledPageCount = driver.findElement(By.xpath("//*[@id=\"sp_1_BaseMainContent_MainContent_jqgTrade_toppager\"]"));
-        wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.cssSelector("#BaseMainContent_MainContent_jqgTrade_toppager_center > table > tbody > tr > td:nth-child(4) > input"))));
         WebElement canceledCurrentPage = driver.findElement(By.cssSelector("#BaseMainContent_MainContent_jqgTrade_toppager_center > table > tbody > tr > td:nth-child(4) > input"));
-        wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.cssSelector("#next_t_BaseMainContent_MainContent_jqgTrade_toppager"))));
         WebElement canceledNextPage = driver.findElement(By.cssSelector("#next_t_BaseMainContent_MainContent_jqgTrade_toppager"));
         totalPages = null;
         totalPages = canceledPageCount.getText().toString();
@@ -142,12 +123,10 @@ public class FirstTest {
         totalPagesValue = Integer.valueOf(totalPages);
         currentPageAttribute = canceledCurrentPage.getAttribute("value");
         currentPageValue = Integer.valueOf(currentPageAttribute.trim());
+        System.out.println(currentPageValue);
         int canceledCounter=0;
-        while (currentPageValue<totalPagesValue){
-            //if (currentPageValue<totalPagesValue) {
-                wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//td[@aria-describedby='BaseMainContent_MainContent_jqgTrade_OosNumber']"))));
+        while (currentPageValue<totalPagesValue+1){
                 eisNumberColumn = driver.findElements(By.xpath("//td[@aria-describedby='BaseMainContent_MainContent_jqgTrade_OosNumber']"));
-                wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//td[@aria-describedby='BaseMainContent_MainContent_jqgTrade_StartPrice']"))));
                 startPriceColumn = driver.findElements(By.xpath("//td[@aria-describedby='BaseMainContent_MainContent_jqgTrade_StartPrice']"));
                 for (int i = 0; i < eisNumberColumn.size(); i++) {
                     EisCell = eisNumberColumn.get(i);
@@ -162,21 +141,14 @@ public class FirstTest {
                         canceledCounter = canceledCounter + 1;
                     }
                 }
-                try {
-                    TimeUnit.SECONDS.sleep(2);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                compareCurrentPageValue = String.valueOf(currentPageValue+1);
+            if (currentPageValue!=totalPagesValue){
                 canceledNextPage.click();
-                try {
-                    TimeUnit.SECONDS.sleep(2);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                wait.until(ExpectedConditions.attributeToBe(canceledCurrentPage,"value",compareCurrentPageValue));
+                 }
+                else {break;}
                 eisNumberColumn = null;
                 startPriceColumn = null;
-            //}
-            //else { break;}
             currentPageAttribute = canceledCurrentPage.getAttribute("value");
             currentPageValue = Integer.valueOf(currentPageAttribute.trim());
         }
@@ -190,7 +162,6 @@ public class FirstTest {
         System.out.println();
         System.out.print("Total: ");
         System.out.printf("%.2f",total);
-
     }
     @AfterClass
     public static void write () throws Exception{
@@ -204,7 +175,6 @@ public class FirstTest {
         report.write(String.format("%(.2f",total));
         report.close();
         System.out.println("Recorded");
-        //driver.quit();
-
+        driver.quit();
     }
 }
